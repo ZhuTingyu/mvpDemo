@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">MpvDemo</string>
+
+    <string name="base_url">123</string>
+</resources>

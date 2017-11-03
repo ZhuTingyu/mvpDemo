@@ -1,0 +1,23 @@
+package util;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import java.lang.reflect.Type;
+
+/**
+ * Created by chenshuai on 2017/11/3.
+ */
+
+public class GsonUtil {
+    public static <T> T fromJson(String json, Type classOfT) {
+        Gson gson = new Gson();
+        return gson.fromJson(json, classOfT);
+    }
+
+    public static String toJson(Object object) {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        return gson.toJson(object);
+    }
+
+}
