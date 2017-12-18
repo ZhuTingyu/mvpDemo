@@ -6,12 +6,9 @@ import com.mpvdemo.app.MainView;
 import java.util.List;
 
 import io.reactivex.functions.Consumer;
-import model.MainModel;
-import model.MainModelImpl;
 import model.ProjectContentModel;
 import model.ProjectContentModelImpl;
 import model.entity.ProjectContentEntity;
-import model.entity.ProjectEntity;
 import util.GsonUtil;
 
 /**
