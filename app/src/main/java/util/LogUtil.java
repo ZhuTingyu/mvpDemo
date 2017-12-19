@@ -15,6 +15,12 @@ public class LogUtil {
     }
 
     public static void print(Map<String, String> map){
-        Log.e("s: ", "");
+        StringBuffer sb = new StringBuffer();
+        sb.append("{\n");
+        for (String key : map.keySet()) {
+            sb.append(key + ": " + map.get(key) + "\n");
+        }
+        sb.append("}");
+        Log.e("d",sb.toString());
     }
 }

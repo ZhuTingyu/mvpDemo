@@ -44,9 +44,10 @@ public class ProjectContentActivity extends AppCompatActivity implements MainVie
 
     private void initData() {
 
-        /*presenter.onGetData("",projectContentEntities -> {
+        presenter.onGetData("",projectContentEntities -> {
 
-        });*/
+        });
+
 
         List<ProjectContentEntity> data = new ArrayList<>();
         for(int i = 0; i < 5; i++){

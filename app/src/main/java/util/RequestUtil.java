@@ -1,9 +1,15 @@
 package util;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import io.reactivex.Observable;
+import model.entity.ApiResponse;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -19,6 +25,8 @@ public class RequestUtil<T> {
     private Map<String, String> bodyParameter = new HashMap<>();
     private Map<String, String> headParameter = new HashMap<>();
 
+    private Type toJsonType;
+
     private String url;
     private String baseUrl;
     private String headUrl;
@@ -30,7 +38,7 @@ public class RequestUtil<T> {
 
     private String sign;
 
-    public RequestUtil<T> builder() {
+    public static <T> RequestUtil<T> builder() {
         RequestUtil<T> requestUtil = new RequestUtil<>();
 
         return requestUtil;
@@ -46,23 +54,63 @@ public class RequestUtil<T> {
         return this;
     }
 
-    public void request() {
+    public RequestUtil<T> headUrl(String headUrl) {
+        this.headUrl = headUrl;
+        return this;
+    }
+
+    public RequestUtil<T> url(String url) {
+        this.url = url;
+        return this;
+    }
+
+    public RequestUtil<T> setToJsonType(Type toJsonType) {
+        this.toJsonType = toJsonType;
+        return this;
+    }
+
+    public Observable<T> request() {
+
+        LogUtil.print(bodyParameter);
+        LogUtil.print(getRequestUrl()+url);
+
         okHttpClient = new OkHttpClient.Builder()
                 .addInterceptor(new BaseInterceptor(headParameter))
                 .connectTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
                 .build();
+
+        Gson gson = new GsonBuilder()
+                .setLenient()
+                .create();
+
+
+        retrofit = new Retrofit.Builder()
+                .baseUrl(getRequestUrl())
+                .client(okHttpClient)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+
+
         requestInterface = retrofit.create(RequestInterface.class);
 
+        Observable<T> observable = RxRequest.getRxHttp(this)
+                .map(s -> {
+                    return GsonUtil.fromJson(s, toJsonType);
+                });
+
+        observable = observable.map(e -> {
+            if (e instanceof ApiResponse) {
+                ApiResponse responseJson = (ApiResponse) e;
+                LogUtil.print(responseJson.toJsonString());
+            }
+            return e;
+        });
+        return observable;
 
     }
 
     public RequestUtil<T> setBaseUrl(String baseUrl) {
         this.baseUrl = baseUrl;
-        retrofit = new Retrofit.Builder()
-                .baseUrl(baseUrl)
-                .client(okHttpClient)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
         return this;
 
     }
@@ -72,7 +120,7 @@ public class RequestUtil<T> {
     }
 
     String getRequestUrl(){
-        return headUrl + baseUrl;
+        return  baseUrl + headUrl;
     }
 
     String getSign(){
@@ -80,7 +128,13 @@ public class RequestUtil<T> {
         return "";
     }
 
+    public String getUrl() {
+        return url;
+    }
+
     public Map<String, String> getBodyParameter() {
         return bodyParameter;
     }
+
+
 }

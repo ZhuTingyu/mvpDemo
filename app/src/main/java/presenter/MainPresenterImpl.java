@@ -5,7 +5,10 @@ import com.mpvdemo.app.MainView;
 
 import java.util.List;
 
+import io.reactivex.Scheduler;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 import model.MainModel;
 import model.MainModelImpl;
 import model.entity.ProjectEntity;
@@ -30,10 +33,17 @@ public class MainPresenterImpl implements MainPresenter {
         if (mainView != null) {
             mainView.showProgress();
         }
-        mainModel.getData().map(s -> {
+       /* mainModel.getData().map(s -> {
             mainView.hideProgress();
             List<ProjectEntity> projectEntity = GsonUtil.fromJson(s, new TypeToken<List<ProjectEntity>>(){}.getType());
             return projectEntity;
-        }).subscribe(onNext);
+        }).subscribe(onNext);*/
+
+        mainModel.demoInfo().map(s -> {
+            mainView.hideProgress();
+            return s;
+        }).subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread()).subscribe(r -> {
+
+        });
     }
 }

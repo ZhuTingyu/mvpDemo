@@ -1,8 +1,11 @@
 package util;
 
+import com.google.gson.JsonObject;
+
 import java.util.Map;
 
 import io.reactivex.Observable;
+import model.entity.ApiResponse;
 import okhttp3.MultipartBody;
 import retrofit2.Call;
 import retrofit2.Response;
@@ -18,9 +21,22 @@ public class RxRequest {
 
             MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
 
-            Call<String> call = rxRequest.getRequestInterface().request(rxRequest.getRequestUrl(),rxRequest.getSign(), builder.build());
+            for (String key : body.keySet()) {
+                builder.addFormDataPart(key, body.get(key));
+            }
 
-            Response<String> response = call.execute();
+            Call<ApiResponse<Object>> call = rxRequest.getRequestInterface().request(rxRequest.getUrl(),"",rxRequest.getSign(), builder.build());
+
+            Response<ApiResponse<Object>> response = call.execute();
+
+            if(response.code() == 200){
+                observableEmitter.onNext(response.body().toJsonString());
+            }else {
+                ApiResponse apiResponse = new ApiResponse();
+                apiResponse.errorCode = -1;
+                apiResponse.msg = "服务器内部异常";
+                observableEmitter.onNext(GsonUtil.toJson(apiResponse));
+            }
 
         });
     }

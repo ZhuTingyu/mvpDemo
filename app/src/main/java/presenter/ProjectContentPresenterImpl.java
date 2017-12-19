@@ -8,6 +8,7 @@ import java.util.List;
 import io.reactivex.functions.Consumer;
 import model.ProjectContentModel;
 import model.ProjectContentModelImpl;
+import model.entity.ApiResponse;
 import model.entity.ProjectContentEntity;
 import util.GsonUtil;
 
@@ -35,6 +36,14 @@ public class ProjectContentPresenterImpl implements ProjectContentPresenter {
             List<ProjectContentEntity> projectEntity = GsonUtil.fromJson(s, new TypeToken<List<ProjectContentEntity>>(){}.getType());
             return projectEntity;
         }).subscribe(onNext);
+
+        mainModel.demoInfo().map(s -> {
+            mainView.hideProgress();
+            return s;
+        }).subscribe(r -> {
+
+        });
+
     }
 
 }
