@@ -24,6 +24,7 @@ public class RequestUtil<T> {
 
     private Map<String, String> bodyParameter = new HashMap<>();
     private Map<String, String> headParameter = new HashMap<>();
+    private Map<String, String> fileParameter = new HashMap<>();
 
     private Type toJsonType;
 
@@ -38,6 +39,8 @@ public class RequestUtil<T> {
 
     private String sign;
 
+    private int uid;
+
     public static <T> RequestUtil<T> builder() {
         RequestUtil<T> requestUtil = new RequestUtil<>();
 
@@ -46,6 +49,11 @@ public class RequestUtil<T> {
 
     public RequestUtil<T> addBody(String key, String value) {
         bodyParameter.put(key, value);
+        return this;
+    }
+
+    public RequestUtil<T> addFile(String key, String filePath) {
+        fileParameter.put(key, filePath);
         return this;
     }
 
@@ -67,6 +75,18 @@ public class RequestUtil<T> {
     public RequestUtil<T> setToJsonType(Type toJsonType) {
         this.toJsonType = toJsonType;
         return this;
+    }
+
+    public RequestUtil<T> setBaseUrl(String baseUrl) {
+        this.baseUrl = baseUrl;
+        return this;
+
+    }
+
+    public RequestUtil<T> setUserId(int userId) {
+        this.uid = userId;
+        return this;
+
     }
 
     public Observable<T> request() {
@@ -109,11 +129,6 @@ public class RequestUtil<T> {
 
     }
 
-    public RequestUtil<T> setBaseUrl(String baseUrl) {
-        this.baseUrl = baseUrl;
-        return this;
-
-    }
 
     RequestInterface getRequestInterface() {
         return requestInterface;
@@ -136,5 +151,11 @@ public class RequestUtil<T> {
         return bodyParameter;
     }
 
+    public int getUid() {
+        return uid;
+    }
 
+    public Map<String, String> getFileParameter() {
+        return fileParameter;
+    }
 }

@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 
 import model.entity.ApiResponse;
 import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.POST;
@@ -16,8 +17,9 @@ import retrofit2.http.Url;
  */
 
 public interface RequestInterface {
+
     @POST
-    Call<ApiResponse<Object>> request(
+    Call<ResponseBody> request(
             @Url String url,
             @Query("u") String uid,
             @Query("sign") String sign,
